@@ -1,10 +1,23 @@
-FROM openjdk:8-jre-alpine
+# Extend vert.x image
+FROM vertx/vertx3
 
-WORKDIR /opt
 
-ADD target/vertx-mqtt-broker-2.2.13-fat.jar mqtt-broker.jar
-ADD config.json config.json
-ADD entrypoint.sh entrypoint.sh
+#                                                       
+ENV VERTICLE_NAME br.ufba.dcc.wiser.soft_iot.mapping_devices.controller.ControllerImpl
+ENV VERTICLE_FILE /target/reactive-iot-mapping-devices-1.0.0-SNAPSHOT.jar
 
-ENTRYPOINT ["./entrypoint.sh"]
-CMD ["-c", "/opt/config.json"]
+# Set the location of the verticles
+ENV VERTICLE_HOME /home/cleberlira/NetBeansProjects/reactive-iot-mapping-devices/
+
+#/home/cleberlira/NetBeansProjects/reactive-iot-mapping-devices/src/main/java/br/ufba/dcc/wiser/soft_iot/mapping_devices/#controller
+
+EXPOSE 8080
+
+# Copy your verticle to the container                   
+COPY $VERTICLE_FILE $VERTICLE_HOME/
+
+# Launch the verticle
+WORKDIR $VERTICLE_HOME
+ENTRYPOINT ["sh", "-c"]
+CMD ["exec vertx run $VERTICLE_NAME -cp $VERTICLE_HOME/*"]
+
