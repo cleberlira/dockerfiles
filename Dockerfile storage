@@ -1,0 +1,22 @@
+# Extend vert.x image
+FROM vertx/vertx3
+
+
+#                                                       
+ENV VERTICLE_NAME br.ufba.dcc.wiser.iot_reactive.reactive.local.storage.MqttH2StorageController
+ENV VERTICLE_FILE /target/reactive-iot-local-storage-1.0.jar
+
+# Set the location of the verticles
+ENV VERTICLE_HOME /home/cleberlira/NetBeansProjects/reactive-iot-local-storage
+
+EXPOSE 8080
+
+# Copy your verticle to the container                   
+COPY $VERTICLE_FILE $VERTICLE_HOME/
+
+# Launch the verticle
+WORKDIR $VERTICLE_HOME
+ENTRYPOINT ["sh", "-c"]
+CMD ["java -jar reactive-iot-local-storage-1.0.jar -cp . -cluster"]
+
+
