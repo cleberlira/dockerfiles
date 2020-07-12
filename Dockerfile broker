@@ -1,0 +1,27 @@
+# Extend vert.x image
+FROM openjdk:8-jre-alpine
+
+
+#                                                       
+ENV VERTICLE_NAME br.ufba.dcc.wiser.mqtt.Main
+ENV VERTICLE_FILE /target/reactive-mqtt-broker-1.0.0-fat.jar
+
+
+# Set the location of the verticles
+ENV VERTICLE_HOME /verticles
+
+
+EXPOSE 8080
+
+# Copy your verticle to the container                   
+COPY $VERTICLE_FILE $VERTICLE_HOME/
+
+# Launch the verticle
+WORKDIR $VERTICLE_HOME
+ADD config.json config.json
+
+ENTRYPOINT ["sh", "-c"]
+
+
+CMD ["java -jar reactive-mqtt-broker-1.0.0-fat.jar -c config.json -cp . -cluster"]
+
